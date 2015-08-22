@@ -7,8 +7,10 @@ require_relative 'redis_adapter'
 #
 ###############################################################################
 
+redis = Redis.new(:host => "127.0.0.1", :port => 6379)
+
 # get the user's lists
-get "/username/:username/lists" do
+get "/users/:username/lists" do
   "Hello!"
 end
 
@@ -22,8 +24,13 @@ delete "/users/:username/lists/:listid" do
   "Hello!"
 end
 
-# return the data about a specific list
+# return a list
 get "/users/:username/lists/:listid" do
+  "Hello!"
+end
+
+# update a list
+put "/users/:username/lists/:listid" do
   "Hello!"
 end
 
