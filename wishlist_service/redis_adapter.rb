@@ -2,7 +2,6 @@ require 'redis'
 require 'json'
 
 class User
-
   # new_list = { :title, :public, :created_at, :updated_at }
   def self.add_list redis, username, new_list
     new_list = new_list.to_json if new_list.class == Hash
@@ -43,44 +42,56 @@ class User
     redis.hdel("users:#{username}:lists", list_id)
   end
 
+  ###############################################################################
+  #
+  # => Lists followed and unfollowed
+  #
+  ###############################################################################
 
   def self.follow_list redis, username, following_username, list_id
-
+    redis.zadd("users:#{username}:lists:following", Time.now.to_f, "#{following_username}:#{list_id}")
   end
 
 
-  def self.unfollow_list username, following_username, list_id
-
+  def self.unfollow_list redis, username, following_username, list_id
+    redis.zrem("users:#{username}:lists:following", "#{following_username}:#{list_id}")
+    redis.zadd("users:#{username}:lists:unfollowed", Time.now.to_f, "#{following_username}:#{list_id}")
   end
 
 
-  def self.get_lists_following username
-
+  def self.get_lists_following redis, username
+    redis.zrevrange("users:#{username}:lists:following", 0, -1)
   end
 
 
-  def self.get_lists_unfollowed username
+  def self.get_lists_unfollowed redis, username
+    redis.zrevrange("users:#{username}:lists:unfollowed", 0, -1)
+  end
 
+  ###############################################################################
+  #
+  # => Users followed and unfollowed
+  #
+  ###############################################################################
+
+  def self.follow_user redis, username, following_username
+    redis.zadd("users:#{username}:users:following", Time.now.to_f, following_username)
   end
 
 
-  def self.get_users_following username
-
+  def self.unfollow_user redis, username, following_username
+    redis.zrem("users:#{username}:users:following", following_username)
+    redis.zadd("users:#{username}:users:unfollowed", Time.now.to_f, following_username)
   end
 
 
-  def self.get_users_unfollowed username
-
+  def self.get_users_following redis, username
+    redis.zrevrange("users:#{username}:users:following", 0, -1)
   end
 
 
-  def self.follow_user username, following_username
-
-  end
-
-
-  def self.unfollow_user username, following_username
-
+  def self.get_users_unfollowed redis, username
+    redis.zrevrange("users:#{username}:users:unfollowed", 0, -1)
   end
 end
 
@@ -111,5 +122,4 @@ class List
   def self.delete_product redis, username, list_id, product_id
     redis.hdel("users:#{username}:lists:#{list_id}:products", product_id)
   end
-
 end
