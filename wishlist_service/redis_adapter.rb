@@ -7,6 +7,7 @@ class User
     new_list = new_list.to_json if new_list.class == Hash
     new_id = redis.incr("users:#{username}:lists:cnt")
     redis.hmset("users:#{username}:lists", new_id, new_list)
+    new_id
   end
 
 
@@ -29,18 +30,28 @@ class User
 
 
   def self.get_list redis, username, list_id
-    redis.hget("users:#{username}:lists", list_id)
+    JSON.parse(redis.hget("users:#{username}:lists", list_id))
   end
 
 
   def self.update_list redis, username, list_id, updated_list
+    old_list = get_list(redis, username, list_id)
+
+    if old_list["created_at"]
+      updated_list["created_at"] = old_list["created_at"]
+    else
+      updated_list["created_at"] = Time.now.to_f
+    end
     updated_list = updated_list.to_json if updated_list.class == Hash
+
     redis.hset("users:#{username}:lists", list_id, updated_list)
+    get_list(redis, username, list_id)
   end
 
 
   def self.delete_list redis, username, list_id
     redis.hdel("users:#{username}:lists", list_id)
+    {"result" => "list \##{list_id} deleted"}
   end
 
   ###############################################################################
@@ -102,6 +113,7 @@ class List
     new_product = new_product.to_json if new_product.class == Hash
     new_id = redis.incr("users:#{username}:lists:#{list_id}:products:cnt")
     redis.hmset("users:#{username}:lists:#{list_id}:products", new_id, new_product)
+    new_id
   end
 
   def self.get_products redis, username, list_id

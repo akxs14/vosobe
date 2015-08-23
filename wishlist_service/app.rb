@@ -4,6 +4,34 @@ require_relative 'redis_adapter'
 
 redis = Redis.new(:host => "127.0.0.1", :port => 6379)
 
+
+###############################################################################
+#
+# => Product CRUD
+#
+###############################################################################
+
+# return the data about a specific product
+get "/users/:username/lists/:listid/products/:productid" do
+  "Hello!"
+end
+
+# delete a product
+delete "/users/:username/lists/:listid/products/:productid" do
+  "Hello!"
+end
+
+# add a new product in a list
+post "/users/:username/lists/:listid/products" do
+  "Hello!"
+end
+
+# return the products from a list
+get "/users/:username/lists/:listid/products" do
+  "Hello!"
+end
+
+
 ###############################################################################
 #
 # => Get lists by access level
@@ -36,9 +64,9 @@ post "/users/:username/lists" do
   payload = JSON.parse(request.body.read)
   payload["created_at"] = Time.now.to_f
   payload["updated_at"] = Time.now.to_f
-  write_result = User.add_list(redis, params[:username], payload)
+  id = User.add_list(redis, params[:username], payload)
 
-  {"result" => write_result}.to_json
+  {"id" => id, "results" => "list created"}.to_json
 end
 
 # get the user's lists
@@ -49,44 +77,21 @@ end
 
 # delete a list
 delete "/users/:username/lists/:listid" do
-  "delete /users/:username/lists/:listid"
+  User.delete_list(redis, params[:username], params[:listid])
 end
 
 # return a list
 get "/users/:username/lists/:listid" do
-  "get /users/:username/lists/:listid"
+  list = User.get_list(redis, params[:username], params[:listid])
+  list.to_json
 end
 
 # update a list
 put "/users/:username/lists/:listid" do
-  "put /users/:username/lists/:listid"
-end
-
-
-###############################################################################
-#
-# => Product CRUD
-#
-###############################################################################
-
-# add a new product in a list
-post "/users/:username/lists/:listid/products" do
-  "Hello!"
-end
-
-# return the products from a list
-get "/users/:username/lists/:listid/products" do
-  "Hello!"
-end
-
-# return the data about a specific product
-get "/users/:username/lists/:listid/products/:productid" do
-  "Hello!"
-end
-
-# delete a product
-delete "/users/:username/lists/:listid/products/:productid" do
-  "Hello!"
+  payload = JSON.parse(request.body.read)
+  payload["updated_at"] = Time.now.to_f
+  list = User.update_list(redis, params[:username], params[:listid], payload)
+  list.to_json
 end
 
 ###############################################################################
