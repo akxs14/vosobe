@@ -51,7 +51,7 @@ class User
 
   def self.delete_list redis, username, list_id
     redis.hdel("users:#{username}:lists", list_id)
-    {"result" => "list \##{list_id} deleted"}
+    "list \##{list_id} deleted"
   end
 
   ###############################################################################
@@ -117,12 +117,13 @@ class List
   end
 
   def self.get_products redis, username, list_id
-    redis.hgetall("users:#{username}:lists:#{list_id}:products")
+    lists = redis.hgetall("users:#{username}:lists:#{list_id}:products")
+    lists.each {|k,v| lists[k] = JSON.parse(v)}
   end
 
 
   def self.get_product redis, username, list_id, product_id
-    redis.hget("users:#{username}:lists:#{list_id}:products", product_id)
+    JSON.parse(redis.hget("users:#{username}:lists:#{list_id}:products", product_id))
   end
 
 
@@ -134,5 +135,6 @@ class List
 
   def self.delete_product redis, username, list_id, product_id
     redis.hdel("users:#{username}:lists:#{list_id}:products", product_id)
+    "product \##{list_id} deleted"
   end
 end
