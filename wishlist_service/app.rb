@@ -7,6 +7,76 @@ redis = Redis.new(:host => "127.0.0.1", :port => 6379)
 
 ###############################################################################
 #
+# => Users followed and unfollowed
+#
+###############################################################################
+
+# get the users followed
+get "/users/:username/users/following" do
+  "Hello!"
+end
+
+# add an user in the list of following
+post "/users/:username/users/following/:username" do
+  "Hello!"
+end
+
+# stop following a user
+delete "/users/:username/users/following/:username" do
+  "Hello!"
+end
+
+
+###############################################################################
+#
+# => Lists followed and unfollowed
+#
+###############################################################################
+
+# get the lists the user is following
+get "/users/:username/lists/following" do
+  {"lists_following" => User.get_lists_following(redis, params[:username])}.to_json
+end
+
+# get the lists the user has unfollowed
+get "/users/:username/lists/unfollowed" do
+  {"lists_unfollowed" => User.get_lists_unfollowed(redis, params[:username])}.to_json
+end
+
+# add a list in the list of following
+post "/users/:username/lists/following/:following_username/:listid" do
+  {"result" => User.follow_list(redis,
+    params[:username],
+    params[:following_username],
+    params[:listid])}.to_json
+end
+
+# stop following a list
+delete "/users/:username/lists/following/:following_username/:listid" do
+  {"result" => User.unfollow_list(redis,
+    params[:username],
+    params[:following_username],
+    params[:listid])}.to_json
+end
+
+# get list followers
+get "/users/:username/lists/:listid/followers" do
+  {"followers" => User.get_list_followers(redis,
+    params[:username],
+    params[:listid])}.to_json
+end
+
+# get followers (users)
+get "/users/:username/followers" do
+  {"followers" => User.get_user_followers(redis,
+    params[:username],
+    params[:listid])}.to_json
+end
+
+
+
+###############################################################################
+#
 # => Product CRUD
 #
 ###############################################################################
@@ -104,48 +174,6 @@ put "/users/:username/lists/:listid" do
   payload = JSON.parse(request.body.read)
   payload["updated_at"] = Time.now.to_f
   User.update_list(redis, params[:username], params[:listid], payload).to_json
-end
-
-###############################################################################
-#
-# => Lists followed and unfollowed
-#
-###############################################################################
-
-# get the lists the user is following
-get "/username/:username/lists/following" do
-  "Hello!"
-end
-
-# add a list in the list of following
-post "/username/:username/lists/following/:listid" do
-  "Hello!"
-end
-
-# stop following a list
-delete "/username/:username/lists/following/:listid" do
-  "Hello!"
-end
-
-###############################################################################
-#
-# => Users followed and unfollowed
-#
-###############################################################################
-
-# get the users followed
-get "/username/:username/users/following" do
-  "Hello!"
-end
-
-# add an user in the list of following
-post "/username/:username/users/following/:username" do
-  "Hello!"
-end
-
-# stop following a user
-delete "/username/:username/users/following/:username" do
-  "Hello!"
 end
 
 ###############################################################################
