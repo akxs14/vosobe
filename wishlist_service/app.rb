@@ -11,24 +11,35 @@ redis = Redis.new(:host => "127.0.0.1", :port => 6379)
 #
 ###############################################################################
 
-# return the data about a specific product
-get "/users/:username/lists/:listid/products/:productid" do
-  "Hello!"
-end
-
-# delete a product
-delete "/users/:username/lists/:listid/products/:productid" do
-  "Hello!"
-end
-
 # add a new product in a list
 post "/users/:username/lists/:listid/products" do
-  "Hello!"
+  payload = JSON.parse(request.body.read)
+  payload["created_at"] = Time.now.to_f
+  payload["updated_at"] = Time.now.to_f
+  id = List.add_product(redis, params[:username], params[:listid], payload)
+
+  {"id" => id, "results" => "product created"}.to_json
 end
 
 # return the products from a list
 get "/users/:username/lists/:listid/products" do
-  "Hello!"
+  List.get_products(redis, params[:username], params[:listid]).to_json
+end
+
+# return the data about a specific product
+get "/users/:username/lists/:listid/products/:productid" do
+  List.get_product(redis,
+    params[:username],
+    params[:listid],
+    params[:productid]).to_json
+end
+
+# delete a product
+delete "/users/:username/lists/:listid/products/:productid" do
+  {"result" => List.delete_product(redis,
+    params[:username],
+    params[:listid],
+    params[:productid])}.to_json
 end
 
 
@@ -77,7 +88,9 @@ end
 
 # delete a list
 delete "/users/:username/lists/:listid" do
-  User.delete_list(redis, params[:username], params[:listid])
+  {"result" => User.delete_list(redis,
+    params[:username],
+    params[:listid])}.to_json
 end
 
 # return a list
@@ -90,8 +103,7 @@ end
 put "/users/:username/lists/:listid" do
   payload = JSON.parse(request.body.read)
   payload["updated_at"] = Time.now.to_f
-  list = User.update_list(redis, params[:username], params[:listid], payload)
-  list.to_json
+  User.update_list(redis, params[:username], params[:listid], payload).to_json
 end
 
 ###############################################################################
