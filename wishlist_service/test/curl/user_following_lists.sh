@@ -36,6 +36,14 @@ curl -i \
      http://localhost:4567/users/akxs14/lists/1/followers
 
 
+printf "\n\n Get the unfollowers of akxs14 list 1... \n\n"
+
+curl -i \
+     -H "Content-Type: application/json" \
+     -X GET \
+     -d '{}' \
+     http://localhost:4567/users/akxs14/lists/1/unfollowers
+
 
 printf "\n\n Unfollow list... \n\n"
 
@@ -71,3 +79,12 @@ curl -i \
      -X GET \
      -d '{}' \
      http://localhost:4567/users/akxs14/lists/1/followers
+
+
+printf "\n\n Get the unfollowers of akxs14 list 1... \n\n"
+
+curl -i \
+     -H "Content-Type: application/json" \
+     -X GET \
+     -d '{}' \
+     http://localhost:4567/users/akxs14/lists/1/unfollowers
