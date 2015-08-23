@@ -63,14 +63,18 @@ class User
   # follow a list
   def self.follow_list redis, username, following_username, list_id
     redis.zadd("users:#{username}:lists:following", Time.now.to_f, "#{following_username}:#{list_id}")
-    redis.zadd("users:#{following_username}:lists:#{list_id}:followers", Time.now.to_f, "#{username}:#{list_id}")
     redis.zrem("users:#{username}:lists:unfollowed", "#{following_username}:#{list_id}")
+
+    redis.zadd("users:#{following_username}:lists:#{list_id}:followers", Time.now.to_f, "#{username}:#{list_id}")
+    redis.zrem("users:#{following_username}:lists:#{list_id}:unfollowers", "#{following_username}:#{list_id}")
   end
 
   # unfollow a list
   def self.unfollow_list redis, username, following_username, list_id
     redis.zrem("users:#{username}:lists:following", "#{following_username}:#{list_id}")
     redis.zadd("users:#{username}:lists:unfollowed", Time.now.to_f, "#{following_username}:#{list_id}")
+
+    redis.zadd("users:#{following_username}:lists:#{list_id}:unfollowers", Time.now.to_f, "#{following_username}:#{list_id}")
     redis.zrem("users:#{following_username}:lists:#{list_id}:followers", "#{username}:#{list_id}")
   end
 
@@ -84,9 +88,14 @@ class User
     redis.zrevrange("users:#{username}:lists:unfollowed", 0, -1) || []
   end
 
-  # get the user who follow a list
+  # get the users who follow a list
   def self.get_list_followers redis, username, list_id
     redis.zrevrange("users:#{username}:lists:#{list_id}:followers", 0, -1) || []
+  end
+
+  # get the users who unfollow a list
+  def self.get_list_unfollowers redis, username, list_id
+    redis.zrevrange("users:#{username}:lists:#{list_id}:unfollowers", 0, -1) || []
   end
 
 
@@ -99,14 +108,18 @@ class User
   # follow a user
   def self.follow_user redis, username, following_username
     redis.zadd("users:#{username}:users:following", Time.now.to_f, following_username)
-    redis.zadd("users:#{following_username}:followers", Time.now.to_f, username)
     redis.zrem("users:#{username}:users:unfollowed", following_username)
+
+    redis.zadd("users:#{following_username}:followers", Time.now.to_f, username)
+    redis.zrem("users:#{following_username}:unfollowers", username)
   end
 
   # stop following a user
   def self.unfollow_user redis, username, following_username
     redis.zrem("users:#{username}:users:following", following_username)
     redis.zadd("users:#{username}:users:unfollowed", Time.now.to_f, following_username)
+
+    redis.zadd("users:#{following_username}:unfollowers", Time.now.to_f, username)
     redis.zrem("users:#{following_username}:followers", username)
   end
 
@@ -122,7 +135,12 @@ class User
 
   # get the users who follow the user
   def self.get_user_followers redis, username
-    redis.zrem("users:#{username}:followers", 0, -1) || []
+    redis.zrevrange("users:#{username}:followers", 0, -1) || []
+  end
+
+  # get the users who unfollow the user
+  def self.get_user_unfollowers redis, username
+    redis.zrevrange("users:#{username}:unfollowers", 0, -1) || []
   end
 end
 
