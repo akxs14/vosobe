@@ -13,17 +13,38 @@ redis = Redis.new(:host => "127.0.0.1", :port => 6379)
 
 # get the users followed
 get "/users/:username/users/following" do
-  "Hello!"
+  {"users_following" => User.get_users_following(redis, params[:username])}.to_json
 end
 
-# add an user in the list of following
-post "/users/:username/users/following/:username" do
-  "Hello!"
+# get the users the user has unfollowed
+get "/users/:username/users/unfollowed" do
+  {"users_unfollowed" => User.get_users_unfollowed(redis, params[:username])}.to_json
+end
+
+# add a user in the list of following
+post "/users/:username/users/following/:following_username" do
+  {"result" => User.follow_user(redis,
+    params[:username],
+    params[:following_username])}.to_json
 end
 
 # stop following a user
-delete "/users/:username/users/following/:username" do
-  "Hello!"
+delete "/users/:username/users/following/:following_username" do
+  {"result" => User.unfollow_user(redis,
+    params[:username],
+    params[:following_username])}.to_json
+end
+
+# get followers (users)
+get "/users/:username/users/followers" do
+  {"followers" => User.get_user_followers(redis,
+    params[:username])}.to_json
+end
+
+# get followers (users)
+get "/users/:username/users/unfollowers" do
+  {"unfollowers" => User.get_user_unfollowers(redis,
+    params[:username])}.to_json
 end
 
 
@@ -66,13 +87,12 @@ get "/users/:username/lists/:listid/followers" do
     params[:listid])}.to_json
 end
 
-# get followers (users)
-get "/users/:username/followers" do
-  {"followers" => User.get_user_followers(redis,
+# get list followers
+get "/users/:username/lists/:listid/unfollowers" do
+  {"unfollowers" => User.get_list_unfollowers(redis,
     params[:username],
     params[:listid])}.to_json
 end
-
 
 
 ###############################################################################
@@ -174,67 +194,4 @@ put "/users/:username/lists/:listid" do
   payload = JSON.parse(request.body.read)
   payload["updated_at"] = Time.now.to_f
   User.update_list(redis, params[:username], params[:listid], payload).to_json
-end
-
-###############################################################################
-#
-# => List of list followers and unfollowers
-#
-###############################################################################
-
-# get the list followers
-get "/users/:username/lists/:listid/followers" do
-  "Hello!"
-end
-
-# adds a follower
-post "/users/:username/lists/:listid/followers/:username" do
-  "Hello!"
-end
-
-# deletes a list follower
-delete "/users/:username/lists/:listid/followers/:username" do
-  "Hello!"
-end
-
-# get the list of unfollowers
-get "/users/:username/lists/:listid/unfollowers" do
-  "Hello!"
-end
-
-# adds an unfollower
-post "/users/:username/lists/:listid/unfollowers/:username" do
-  "Hello!"
-end
-
-
-###############################################################################
-#
-# => List of user followers and unfollowers
-#
-###############################################################################
-
-# get the list of the user's followers
-get "/users/:username/users/followers" do
-  "Hello!"
-end
-
-# add user follower
-post "/users/:username/users/followers" do
-  "Hello!"
-end
-
-# delete user follower
-delete "/users/:username/users/followers/:username" do
-  "Hello!"
-end
-
-# get the list of the user's unfollowers
-get "/users/:username/users/unfollowers" do
-  "Hello!"
-end
-
-# add user unfollower
-post "/users/:username/users/unfollowers" do
-  "Hello!"
 end
