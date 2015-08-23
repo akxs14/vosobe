@@ -11,19 +11,20 @@ class User
 
 
   def self.get_lists redis, username
-    redis.hgetall("users:#{username}:lists")
+    lists = redis.hgetall("users:#{username}:lists")
+    lists.each {|k,v| lists[k] = JSON.parse(v)}
   end
 
 
   def self.get_private_lists redis, username
-    lists = redis.hgetall("users:#{username}:lists").each {|k,v| JSON.parse(v)}
-    lists.select {|k,v| JSON.parse(v)["public"] == false}
+    lists = redis.hgetall("users:#{username}:lists")
+    lists.each {|k,v| lists[k] = JSON.parse(v)}.select {|_,v| v["public"] == false}
   end
 
 
   def self.get_public_lists redis, username
     lists = redis.hgetall("users:#{username}:lists")
-    lists.select {|k,v| JSON.parse(v)["public"] == true}
+    lists.each {|k,v| lists[k] = JSON.parse(v)}.select {|_,v| v["public"] == true}
   end
 
 
