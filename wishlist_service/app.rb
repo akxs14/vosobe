@@ -1,13 +1,35 @@
 require "sinatra"
 require_relative 'redis_adapter'
 
+
+redis = Redis.new(:host => "127.0.0.1", :port => 6379)
+
+###############################################################################
+#
+# => Get lists by access level
+#
+###############################################################################
+
+# get user's public lists
+get "/users/:username/lists/public" do
+  lists = User.get_public_lists(redis, params[:username])
+  puts "public: #{lists}"
+  lists.to_json
+end
+
+# get user's private lists
+get "/users/:username/lists/private" do
+  lists = User.get_private_lists(redis, params[:username])
+  puts "private: #{lists}"
+  lists.to_json
+end
+
+
 ###############################################################################
 #
 # => Lists CRUD
 #
 ###############################################################################
-
-redis = Redis.new(:host => "127.0.0.1", :port => 6379)
 
 # create a new list
 post "/users/:username/lists" do
@@ -27,38 +49,19 @@ end
 
 # delete a list
 delete "/users/:username/lists/:listid" do
-  "Hello!"
+  "delete /users/:username/lists/:listid"
 end
 
 # return a list
 get "/users/:username/lists/:listid" do
-  "Hello!"
+  "get /users/:username/lists/:listid"
 end
 
 # update a list
 put "/users/:username/lists/:listid" do
-  "Hello!"
+  "put /users/:username/lists/:listid"
 end
 
-###############################################################################
-#
-# => Get lists by access level
-#
-###############################################################################
-
-# get user's public lists
-get "/username/:username/lists/public" do
-  lists = User.get_public_lists(redis, params[:username])
-  puts "public: #{lists}"
-  lists.to_json
-end
-
-# get user's private lists
-get "/users/:username/lists/private" do
-  lists = User.get_private_lists(redis, params[:username])
-  puts "private: #{lists}"
-  lists.to_json
-end
 
 ###############################################################################
 #
