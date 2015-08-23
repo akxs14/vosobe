@@ -9,14 +9,20 @@ require_relative 'redis_adapter'
 
 redis = Redis.new(:host => "127.0.0.1", :port => 6379)
 
-# get the user's lists
-get "/users/:username/lists" do
-  "Hello!"
-end
-
 # create a new list
 post "/users/:username/lists" do
-  "Hello!"
+  payload = JSON.parse(request.body.read)
+  payload["created_at"] = Time.now.to_f
+  payload["updated_at"] = Time.now.to_f
+  write_result = User.add_list(redis, params[:username], payload)
+
+  {"result" => write_result}.to_json
+end
+
+# get the user's lists
+get "/users/:username/lists" do
+  lists = User.get_lists(redis, params[:username])
+  lists.to_json
 end
 
 # delete a list
@@ -42,12 +48,16 @@ end
 
 # get user's public lists
 get "/username/:username/lists/public" do
-  "Hello!"
+  lists = User.get_public_lists(redis, params[:username])
+  puts "public: #{lists}"
+  lists.to_json
 end
 
 # get user's private lists
 get "/users/:username/lists/private" do
-  "Hello!"
+  lists = User.get_private_lists(redis, params[:username])
+  puts "private: #{lists}"
+  lists.to_json
 end
 
 ###############################################################################
