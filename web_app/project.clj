@@ -32,6 +32,7 @@
                  [cljsjs/react "0.13.3-1"]
                  [reagent-forms "0.5.6"]
                  [reagent-utils "0.1.5"]
+                 [re-frame "0.4.1"]
                  [secretary "1.2.3"]
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
                  [cljs-ajax "0.3.14"]
