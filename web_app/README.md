@@ -14,6 +14,10 @@ To start a web server for the application, run:
 
     lein run
 
+## Contains
+
+lein new luminus web_app +postgres +auth +cljs +cucumber +swagger
+
 ## License
 
 Copyright © 2015 FIXME

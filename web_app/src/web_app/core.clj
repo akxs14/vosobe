@@ -52,7 +52,8 @@
 
 (defn stop-app []
   (stop-nrepl)
-  (stop-http-server))
+  (stop-http-server)
+  (shutdown-agents))
 
 (defn start-app [[port]]
   (.addShutdownHook (Runtime/getRuntime) (Thread. stop-app))
