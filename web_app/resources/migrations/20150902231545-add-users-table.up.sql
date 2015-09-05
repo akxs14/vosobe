@@ -1,7 +1,8 @@
 CREATE TABLE users
-(id VARCHAR(20) PRIMARY KEY,
+(id BIGSERIAL PRIMARY KEY,
  first_name VARCHAR(30),
  last_name VARCHAR(30),
+ alias VARCHAR(30),
  email VARCHAR(30),
  admin BOOLEAN,
  last_login TIME,
