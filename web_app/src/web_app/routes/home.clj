@@ -1,6 +1,6 @@
 (ns web-app.routes.home
   (:require [web-app.layout :as layout]
-            [compojure.core :refer [defroutes GET]]
+            [compojure.core :refer [defroutes GET POST PUT DELETE]]
             [ring.util.http-response :refer [ok]]
             [clojure.java.io :as io]))
 
@@ -25,10 +25,10 @@
 (defn get-unfollowers [username]
   (str username " unfollowers"))
 
-(def get-lists-following [username]
+(defn get-lists-following [username]
   (str "lists " username " is following"))
 
-(def get-lists-unfollowed [username]
+(defn get-lists-unfollowed [username]
   (str "lists " username " has unfollowed"))
 
 (defn follow-list [username, following_username, listid]
@@ -79,21 +79,57 @@
 
 (defroutes home-routes
   (GET "/" [] (home-page))
-  (GET "/docs" [] (ok (-> "docs/docs.md" io/resource slurp)))
+  (GET "/docs" [] (ok (-> "docs/docs.md" io/resource slurp))))
+
+
+(defroutes user-list-routes
+  (GET "/users/:username/lists" [username]
+    (get-lists))
+  (GET "/users/:username/lists/public" [username]
+    (get-public-lists))
+  (GET "/users/:username/lists/private" [username]
+    (get-private-lists))
+  (GET "/users/:username/lists/:listid" [username, listid]
+    (get-list))
+  (POST "/users/:username/lists" [username]
+    (create-list))
+  (PUT "/users/:username/lists/:listid" [username, listid]
+    (update-list))
+  (DELETE "/users/:username/lists/:listid" [username, listid]
+    (delete-list)))
+
+
+(defroutes product-routes
+  (POST "/users/:username/lists/:listid/products" [username, listid]
+    (add-product))
+  (GET "/users/:username/lists/:listid/products" [username, listid]
+    (get-list-products))
+  (GET "/users/:username/lists/:listid/products/:productid"
+    [username, listid, productid]
+    (get-product))
+  (DELETE "/users/:username/lists/:listid/products/:productid"
+    [username, listid, productid]
+    (delete-product)))
+
+
+(defroutes user-follow-routes
+  (POST "/users/:username/users/following/:following_username"
+    [username, following_username]
+    (follow-user))
   (GET "/users/:username/users/following" [username]
     (get-following-users))
   (GET "/users/:username/users/unfollowed" [username]
     (get-unfollowed-users))
-  (POST "/users/:username/users/following/:following_username"
-    [username, following_username]
-    (follow-user))
-  (DELETE "/users/:username/users/following/:following_username"
-    [username, following_username]
-    (unfollow-user))
   (GET "/users/:username/users/followers" [username]
     (get-followers))
   (GET "/users/:username/users/unfollowers" [username]
     (get-unfollowers))
+  (DELETE "/users/:username/users/following/:following_username"
+    [username, following_username]
+    (unfollow-user)))
+
+
+(defroutes list-follow-routes
   (GET "/users/:username/lists/following" [username]
     (get-lists-following))
   (GET "/users/:username/lists/unfollowed" [username]
@@ -107,28 +143,4 @@
   (GET "/users/:username/lists/:listid/followers" [username, listid]
     (get-list-followers))
   (GET "/users/:username/lists/:listid/unfollowers" [username, listid]
-    (get-list-unfollowers))
-  (POST "/users/:username/lists/:listid/products" [username, listid, {}]
-    (add-product))
-  (GET "/users/:username/lists/:listid/products" [username, listid]
-    (get-list-products))
-  (GET "/users/:username/lists/:listid/products/:productid"
-    [username, listid, productid]
-    (get-product))
-  (DELETE "/users/:username/lists/:listid/products/:productid"
-    [username, listid, productid]
-    (delete-product))
-  (GET "/users/:username/lists/public" [username]
-    (get-public-lists))
-  (GET "/users/:username/lists/private" [username]
-    (get-private-lists))
-  (POST "/users/:username/lists" [username, {}]
-    (create-list))
-  (DELETE "/users/:username/lists/:listid" [username, listid]
-    (delete-list))
-  (GET "/users/:username/lists/:listid" [username, listid]
-    (get-list))
-  (PUT "/users/:username/lists/:listid" [username, listid]
-    (update-list))
-  (GET "/users/:username/lists" [username]
-    (get-lists)))
+    (get-list-unfollowers)))
