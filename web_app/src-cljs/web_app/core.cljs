@@ -12,13 +12,17 @@
   [:div.navbar.navbar-inverse.navbar-fixed-top
    [:div.container
     [:div.navbar-header
-     [:a.navbar-brand {:href "#/"} "myapp"]]
+     [:a.navbar-brand {:href "#/"} "vosobe"]]
     [:div.navbar-collapse.collapse
-     [:ul.nav.navbar-nav
-      [:li {:class (when (= :home (session/get :page)) "active")}
-       [:a {:href "#/"} "Home"]]
-      [:li {:class (when (= :about (session/get :page)) "active")}
-       [:a {:href "#/about"} "About"]]]]]])
+     [:form.navbar-form.navbar-left {:role "search"}
+      [:div.form-group
+       [:input#search-txtbox.form-control {:type "text" :placeholder "Find friends or lists"}]]]
+     [:ul.nav.navbar-nav.navbar-right
+      [:li {:class (when (= :about (session/get :page)) )}
+       [:a {:href "#/settings"} "Settings"]]
+      [:li {:class (when (= :about (session/get :page)) )}
+       [:a {:href "#/login"} "Login"]]]
+     ]]])
 
 (defn about-page []
   [:div.container
@@ -27,19 +31,12 @@
      "this is the story of web_app... work in progress"]]])
 
 (defn home-page []
-  [:div.container
-   [:div.jumbotron
-    [:h1 "Welcome to web_app"]
-    [:p "Time to start building your site!"]
-    [:p [:a.btn.btn-primary.btn-lg {:href "http://luminusweb.net"} "Learn more »"]]]
-   [:div.row
-    [:div.col-md-12
-     [:h2 "Welcome to ClojureScript"]]]
-   (when-let [docs (session/get :docs)]
-     [:div.row
-      [:div.col-md-12
-       [:div {:dangerouslySetInnerHTML
-              {:__html (md->html docs)}}]]])])
+  [:div#grid-container.container-fluid
+   [:div#first-row.row
+    [:div.col-md-3.item-cell]
+    [:div.col-md-3.item-cell]
+    [:div.col-md-3.item-cell]
+    [:div.col-md-3.item-cell]]])
 
 (def pages
   {:home #'home-page
