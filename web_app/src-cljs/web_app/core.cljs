@@ -44,6 +44,9 @@
   {:home #'home-page
    :about #'about-page})
 
+(defn not-found []
+  [:div [:h1 "404: Page doesn't exist"]])
+
 (defn page []
   [(pages (session/get :page))])
 
@@ -56,6 +59,8 @@
 
 (secretary/defroute "/about" []
   (session/put! :page :about))
+
+(secretary/defroute "*" [] (page not-found))
 
 ;; -------------------------
 ;; History
