@@ -24,6 +24,9 @@
        [:a {:href "#/login"} "Login"]]]
      ]]])
 
+(defn first-cell []
+  [:p "Click to add a product"])
+
 (defn about-page []
   [:div.container
    [:div.row
@@ -33,10 +36,7 @@
 (defn home-page []
   [:div#grid-container.container-fluid
    [:div#first-row.row
-    [:div.col-md-3.item-cell]
-    [:div.col-md-3.item-cell]
-    [:div.col-md-3.item-cell]
-    [:div.col-md-3.item-cell]]])
+    [:div#first-cell.col-md-3.item-cell]]])
 
 (def pages
   {:home #'home-page
@@ -73,7 +73,8 @@
 
 (defn mount-components []
   (reagent/render [#'navbar] (.getElementById js/document "navbar"))
-  (reagent/render [#'page] (.getElementById js/document "app")))
+  (reagent/render [#'page] (.getElementById js/document "app"))
+  (reagent/render [#'first-cell] (.getElementById js/document "first-cell")))
 
 (defn init! []
   (fetch-docs!)
