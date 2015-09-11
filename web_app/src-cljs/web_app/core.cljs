@@ -8,6 +8,8 @@
             [ajax.core :refer [GET POST]])
   (:import goog.History))
 
+(def state (atom nil))
+
 (defn navbar []
   [:div.navbar.navbar-inverse.navbar-fixed-top
    [:div.container
