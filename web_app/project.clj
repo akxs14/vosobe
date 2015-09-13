@@ -15,6 +15,7 @@
                  [ring-ttl-session "0.1.1"]
                  [ring "1.4.0"
                   :exclusions [ring/ring-jetty-adapter]]
+                 [clj-http "2.0.0"]
                  [metosin/ring-middleware-format "0.6.0"]
                  [metosin/ring-http-response "0.6.5"]
                  [bouncer "0.3.3"]

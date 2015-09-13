@@ -10,6 +10,9 @@
 
 (def state (atom nil))
 
+;; -------------------------
+;; Components
+
 (defn navbar []
   [:div.navbar.navbar-inverse.navbar-fixed-top
    [:div.container
@@ -50,6 +53,13 @@
 (defn page []
   [(pages (session/get :page))])
 
+
+;; -------------------------
+;; Ajax call handlers
+(defn get-lists-handler [response]
+  (.log js/console (str "bla bla bla")))
+
+
 ;; -------------------------
 ;; Routes
 (secretary/set-config! :prefix "#")
@@ -86,4 +96,5 @@
 (defn init! []
   (fetch-docs!)
   (hook-browser-navigation!)
-  (mount-components))
+  (mount-components)
+  (GET "/users/akxs14/lists" (:handler get-lists-handler)))

@@ -2,7 +2,8 @@
   (:require [web-app.layout :as layout]
             [compojure.core :refer [defroutes GET POST PUT DELETE]]
             [ring.util.http-response :refer [ok]]
-            [clojure.java.io :as io]))
+            [clojure.java.io :as io]
+            [clj-http.client :as client]))
 
 (defn home-page []
   (layout/render "home.html"))
@@ -74,17 +75,16 @@
   (str username " update list " listid))
 
 (defn get-lists [username]
-  (str username " lists"))
-
+  (let [response (client/get 
+                   "http://localhost:4567/users/akxs14/lists" 
+                   {:accept :json})]
+  (println response)
+  (str username " lists")))
 
 (defroutes home-routes
-  (GET "/" [] (home-page))
-  (GET "/docs" [] (ok (-> "docs/docs.md" io/resource slurp))))
-
-
-(defroutes user-list-routes
+  (GET "/docs" [] (ok (-> "docs/docs.md" io/resource slurp)))
   (GET "/users/:username/lists" [username]
-    (get-lists))
+    (get-lists username))
   (GET "/users/:username/lists/public" [username]
     (get-public-lists))
   (GET "/users/:username/lists/private" [username]
@@ -96,10 +96,7 @@
   (PUT "/users/:username/lists/:listid" [username, listid]
     (update-list))
   (DELETE "/users/:username/lists/:listid" [username, listid]
-    (delete-list)))
-
-
-(defroutes product-routes
+    (delete-list))
   (POST "/users/:username/lists/:listid/products" [username, listid]
     (add-product))
   (GET "/users/:username/lists/:listid/products" [username, listid]
@@ -109,10 +106,7 @@
     (get-product))
   (DELETE "/users/:username/lists/:listid/products/:productid"
     [username, listid, productid]
-    (delete-product)))
-
-
-(defroutes user-follow-routes
+    (delete-product))
   (POST "/users/:username/users/following/:following_username"
     [username, following_username]
     (follow-user))
@@ -126,10 +120,7 @@
     (get-unfollowers))
   (DELETE "/users/:username/users/following/:following_username"
     [username, following_username]
-    (unfollow-user)))
-
-
-(defroutes list-follow-routes
+    (unfollow-user))
   (GET "/users/:username/lists/following" [username]
     (get-lists-following))
   (GET "/users/:username/lists/unfollowed" [username]
@@ -143,4 +134,5 @@
   (GET "/users/:username/lists/:listid/followers" [username, listid]
     (get-list-followers))
   (GET "/users/:username/lists/:listid/unfollowers" [username, listid]
-    (get-list-unfollowers)))
+    (get-list-unfollowers))
+  (GET "/" [] (home-page)))
