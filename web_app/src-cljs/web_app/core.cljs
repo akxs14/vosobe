@@ -57,7 +57,8 @@
 ;; -------------------------
 ;; Ajax call handlers
 (defn get-lists-handler [response]
-  (.log js/console (str "bla bla bla")))
+  (.log js/console "response")
+  (.log js/console response))
 
 
 ;; -------------------------
@@ -97,4 +98,5 @@
   (fetch-docs!)
   (hook-browser-navigation!)
   (mount-components)
-  (GET "/users/akxs14/lists" (:handler get-lists-handler)))
+  (.log js/console "before GET")
+  (GET "/users/akxs14/lists" {:handler get-lists-handler}))

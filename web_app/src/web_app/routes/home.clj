@@ -79,7 +79,7 @@
                    "http://localhost:4567/users/akxs14/lists" 
                    {:accept :json})]
   (println response)
-  (str username " lists")))
+  {:body (:body response)}))
 
 (defroutes home-routes
   (GET "/docs" [] (ok (-> "docs/docs.md" io/resource slurp)))
