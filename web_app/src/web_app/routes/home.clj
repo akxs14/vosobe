@@ -76,9 +76,8 @@
 
 (defn get-lists [username]
   (let [response (client/get 
-                   "http://localhost:4567/users/akxs14/lists" 
+                   "http://localhost:4567/users/akxs14/lists"
                    {:accept :json})]
-  (println response)
   {:body (:body response)}))
 
 (defroutes home-routes

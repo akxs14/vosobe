@@ -8,7 +8,14 @@
             [ajax.core :refer [GET POST]])
   (:import goog.History))
 
-(def state (atom nil))
+(def session-state (atom {:lists nil :current-list-products nil}))
+
+;; -------------------------
+;; Event Handlers
+
+(defn show-new-product-window []
+  (js/alert "clicked"))
+
 
 ;; -------------------------
 ;; Components
@@ -30,7 +37,7 @@
      ]]])
 
 (defn first-cell []
-  [:p "Click to add a product"])
+  [:p [:a {:on-click show-new-product-window} "Click to add a product"]])
 
 (defn about-page []
   [:div.container
@@ -71,7 +78,6 @@
 (secretary/defroute "/about" []
   (session/put! :page :about))
 
-(secretary/defroute "*" [] (page not-found))
 
 ;; -------------------------
 ;; History
@@ -98,5 +104,4 @@
   (fetch-docs!)
   (hook-browser-navigation!)
   (mount-components)
-  (.log js/console "before GET")
   (GET "/users/akxs14/lists" {:handler get-lists-handler}))

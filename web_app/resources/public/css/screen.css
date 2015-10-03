@@ -19,3 +19,11 @@ body {
   top: 45%;
   left: 20%;
 }
+
+a, a:hover {
+  text-decoration: none;
+}
+
+a:hover {
+  cursor: pointer;
+}
