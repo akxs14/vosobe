@@ -5,7 +5,8 @@
             [goog.events :as events]
             [goog.history.EventType :as EventType]
             [markdown.core :refer [md->html]]
-            [ajax.core :refer [GET POST]])
+            [ajax.core :refer [GET POST]]
+            [reagent-modals.modals :as modal])
   (:import goog.History))
 
 (def session-state (atom {:lists nil :current-list-products nil}))
@@ -14,7 +15,7 @@
 ;; Event Handlers
 
 (defn show-new-product-window []
-  (js/alert "clicked"))
+  (modal/modal! [:div "clicked"]))
 
 
 ;; -------------------------
@@ -39,6 +40,10 @@
 (defn first-cell []
   [:p [:a {:on-click show-new-product-window} "Click to add a product"]])
 
+
+;; -------------------------
+;; Pages
+
 (defn about-page []
   [:div.container
    [:div.row
@@ -48,7 +53,8 @@
 (defn home-page []
   [:div#grid-container.container-fluid
    [:div#first-row.row
-    [:div#first-cell.col-md-3.item-cell]]])
+    [:div#first-cell.col-md-3.item-cell]]
+   [modal/modal-window]])
 
 (def pages
   {:home #'home-page
