@@ -12,11 +12,10 @@
 
 (def session-state (atom {:lists nil :current-list-products nil}))
 
-
 ;; -------------------------
 ;; Event Handlers
 (defn preview-product-page [url]
-  )
+  (.log js/console url))
 
 
 ;; -------------------------
@@ -40,8 +39,10 @@
 (defn add-product-page []
   [:div#product-preview-modal
    [:div.row
-    [:label.col-md-4 {:for "product_url"} "Enter product address"]
-    [:input#product_url.col-md-8 {:type "text" :on-paste #(js/alert "bla")}]]
+    [:label.col-md-3 {:for "product_url"} "Enter product address"]
+    [:input#product_url.col-md-9 {:type "text"
+                                  :on-change #(preview-product-page (-> % .-target .-value))}
+    ]]
    [:div.row
     [:div#website-preview-area.col-md-8]
     [:div#product-preview-form.col-md-4
@@ -58,7 +59,7 @@
       [:textarea#product_descr.col-md-8 {:rows 4}]]
      [:br]
      [:div.row
-      [:button.col-md-3.col-md-offset-1 {:on-click "bla"} "Add"]
+      [:button.col-md-3.col-md-offset-1 {:on-click #("bla")} "Add"]
       [:button.col-md-3.col-md-offset-1 {:data-dismiss "modal"} "Cancel"]]
      ]]])
 
