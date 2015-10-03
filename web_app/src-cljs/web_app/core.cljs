@@ -6,17 +6,11 @@
             [goog.history.EventType :as EventType]
             [markdown.core :refer [md->html]]
             [ajax.core :refer [GET POST]]
-            [reagent-modals.modals :as modal])
+            [reagent-modals.modals :as modal]
+            [reagent-forms.core :as forms])
   (:import goog.History))
 
 (def session-state (atom {:lists nil :current-list-products nil}))
-
-;; -------------------------
-;; Event Handlers
-
-(defn show-new-product-window []
-  (modal/modal! [:div "clicked"]))
-
 
 ;; -------------------------
 ;; Components
@@ -37,8 +31,33 @@
        [:a {:href "#/login"} "Login"]]]
      ]]])
 
+(defn add-product-page []
+  [:div#product-preview-modal
+   [:div.row
+    [:label.col-md-4 {:for "product_url"} "Enter product address"]
+    [:input#product_url.col-md-8 {:type "text"}]]
+   [:div.row
+    [:div#website-preview-area.col-md-8]
+    [:div#product-preview-form.col-md-4
+     [:div.row
+      [:label.col-md-4 {:for "product_name"} "Name"]
+      [:input#product_name.col-md-8 {:type "text"}]]
+     [:br]
+     [:div.row
+      [:label.col-md-4 {:for "product_price"} "Price"]
+      [:input#product_price.col-md-8 {:type "text"}]]
+     [:br]
+     [:div.row
+      [:label.col-md-4 {:for "product_descr"} "Description"]
+      [:textarea#product_descr.col-md-8 {:rows 4}]]
+     [:br]
+     [:div.row
+      [:button.col-md-3.col-md-offset-1 {:on-click "bla"} "Add"]
+      [:button.col-md-3.col-md-offset-1 {:on-click "bla"} "Cancel"]]
+     ]]])
+
 (defn first-cell []
-  [:p [:a {:on-click show-new-product-window} "Click to add a product"]])
+  [:p [:a {:on-click #(modal/modal! (add-product-page) {:size :lg})} "Click to add a product"]])
 
 
 ;; -------------------------

@@ -27,3 +27,18 @@ a, a:hover {
 a:hover {
   cursor: pointer;
 }
+
+#product-preview-modal {
+  min-height: 90%;
+  padding: 30px 30px 30px 30px;
+}
+
+#website-preview-area {
+  height: 100%;
+  border: 1px #eee solid;
+  margin-top: 10px;
+}
+
+#product-preview-form {
+  margin-top: 10px;
+}
