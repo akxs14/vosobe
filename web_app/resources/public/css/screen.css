@@ -1,0 +1,21 @@
+html,
+body {
+	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    height: 100%;
+    padding-top: 25px;
+}
+
+.item-cell {
+  border: 1px solid #000;
+}
+
+#first-cell {
+  height: 200px;
+  display: table;
+}
+
+#first-cell p {
+  position: absolute;
+  top: 45%;
+  left: 20%;
+}
