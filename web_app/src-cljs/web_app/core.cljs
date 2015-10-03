@@ -12,9 +12,15 @@
 
 (def session-state (atom {:lists nil :current-list-products nil}))
 
+
+;; -------------------------
+;; Event Handlers
+(defn preview-product-page [url]
+  )
+
+
 ;; -------------------------
 ;; Components
-
 (defn navbar []
   [:div.navbar.navbar-inverse.navbar-fixed-top
    [:div.container
@@ -35,7 +41,7 @@
   [:div#product-preview-modal
    [:div.row
     [:label.col-md-4 {:for "product_url"} "Enter product address"]
-    [:input#product_url.col-md-8 {:type "text"}]]
+    [:input#product_url.col-md-8 {:type "text" :on-paste #(js/alert "bla")}]]
    [:div.row
     [:div#website-preview-area.col-md-8]
     [:div#product-preview-form.col-md-4
@@ -53,7 +59,7 @@
      [:br]
      [:div.row
       [:button.col-md-3.col-md-offset-1 {:on-click "bla"} "Add"]
-      [:button.col-md-3.col-md-offset-1 {:on-click "bla"} "Cancel"]]
+      [:button.col-md-3.col-md-offset-1 {:data-dismiss "modal"} "Cancel"]]
      ]]])
 
 (defn first-cell []
@@ -62,7 +68,6 @@
 
 ;; -------------------------
 ;; Pages
-
 (defn about-page []
   [:div.container
    [:div.row
