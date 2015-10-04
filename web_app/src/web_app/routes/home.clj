@@ -80,58 +80,64 @@
                    {:accept :json})]
   {:body (:body response)}))
 
+(defn crawl-url [fetch-url]
+  (let [crawled-page (client/get fetch-url)]
+    (:body crawled-page)))
+
 (defroutes home-routes
   (GET "/docs" [] (ok (-> "docs/docs.md" io/resource slurp)))
   (GET "/users/:username/lists" [username]
-    (get-lists username))
+       (get-lists username))
   (GET "/users/:username/lists/public" [username]
-    (get-public-lists))
+       (get-public-lists))
   (GET "/users/:username/lists/private" [username]
-    (get-private-lists))
+       (get-private-lists))
   (GET "/users/:username/lists/:listid" [username, listid]
-    (get-list))
+       (get-list))
   (POST "/users/:username/lists" [username]
-    (create-list))
+        (create-list))
   (PUT "/users/:username/lists/:listid" [username, listid]
-    (update-list))
+       (update-list))
   (DELETE "/users/:username/lists/:listid" [username, listid]
-    (delete-list))
+          (delete-list))
   (POST "/users/:username/lists/:listid/products" [username, listid]
-    (add-product))
+        (add-product))
   (GET "/users/:username/lists/:listid/products" [username, listid]
-    (get-list-products))
+       (get-list-products))
   (GET "/users/:username/lists/:listid/products/:productid"
-    [username, listid, productid]
-    (get-product))
+       [username, listid, productid]
+       (get-product))
   (DELETE "/users/:username/lists/:listid/products/:productid"
-    [username, listid, productid]
-    (delete-product))
+          [username, listid, productid]
+          (delete-product))
   (POST "/users/:username/users/following/:following_username"
-    [username, following_username]
-    (follow-user))
+        [username, following_username]
+        (follow-user))
   (GET "/users/:username/users/following" [username]
-    (get-following-users))
+       (get-following-users))
   (GET "/users/:username/users/unfollowed" [username]
-    (get-unfollowed-users))
+       (get-unfollowed-users))
   (GET "/users/:username/users/followers" [username]
-    (get-followers))
+       (get-followers))
   (GET "/users/:username/users/unfollowers" [username]
-    (get-unfollowers))
+       (get-unfollowers))
   (DELETE "/users/:username/users/following/:following_username"
-    [username, following_username]
-    (unfollow-user))
+          [username, following_username]
+          (unfollow-user))
   (GET "/users/:username/lists/following" [username]
-    (get-lists-following))
+       (get-lists-following))
   (GET "/users/:username/lists/unfollowed" [username]
-    (get-lists-unfollowed))
+       (get-lists-unfollowed))
   (GET "/users/:username/lists/following/:following_username/:listid"
-    [username, following_username, listid]
-    (follow-list))
+       [username, following_username, listid]
+       (follow-list))
   (GET "/users/:username/lists/following/:following_username/:listid"
-    [username, following_username, listid]
-    (unfollow-list))
+       [username, following_username, listid]
+       (unfollow-list))
   (GET "/users/:username/lists/:listid/followers" [username, listid]
-    (get-list-followers))
+       (get-list-followers))
   (GET "/users/:username/lists/:listid/unfollowers" [username, listid]
-    (get-list-unfollowers))
+       (get-list-unfollowers))
+  (GET "/crawler" [fetch-url]
+       (crawl-url fetch-url))
   (GET "/" [] (home-page)))

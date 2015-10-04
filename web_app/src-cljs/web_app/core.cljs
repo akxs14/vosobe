@@ -11,12 +11,24 @@
   (:import goog.History))
 
 (def session-state (atom {:lists nil :current-list-products nil}))
+(def jquery (js* "$"))
+
+
+;; -------------------------
+;; Ajax call handlers
+(defn get-lists-handler [response]
+  (.log js/console "response")
+  (.log js/console response))
+
+(defn load-website [response]
+  (-> (jquery "#website-preview-area")
+      (.html response)))
 
 ;; -------------------------
 ;; Event Handlers
 (defn preview-product-page [url]
-  (.log js/console url))
-
+  (GET "/crawler" {:params {:fetch-url url}
+                   :handler load-website}))
 
 ;; -------------------------
 ;; Components
@@ -90,13 +102,6 @@
 
 (defn page []
   [(pages (session/get :page))])
-
-
-;; -------------------------
-;; Ajax call handlers
-(defn get-lists-handler [response]
-  (.log js/console "response")
-  (.log js/console response))
 
 
 ;; -------------------------
