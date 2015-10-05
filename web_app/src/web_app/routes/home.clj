@@ -85,7 +85,6 @@
     (:body crawled-page)))
 
 (defroutes home-routes
-  (GET "/docs" [] (ok (-> "docs/docs.md" io/resource slurp)))
   (GET "/users/:username/lists" [username]
        (get-lists username))
   (GET "/users/:username/lists/public" [username]
@@ -140,4 +139,5 @@
        (get-list-unfollowers))
   (GET "/crawler" [fetch-url]
        (crawl-url fetch-url))
-  (GET "/" [] (home-page)))
+  (GET "/" [] (home-page))
+  (GET "/docs" [] (ok (-> "docs/docs.md" io/resource slurp))))
