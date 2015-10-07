@@ -6,8 +6,7 @@
             [goog.history.EventType :as EventType]
             [markdown.core :refer [md->html]]
             [ajax.core :refer [GET POST]]
-            [reagent-modals.modals :as modal]
-            [reagent-forms.core :as forms])
+            [reagent-modals.modals :as modal])
   (:import goog.History))
 
 (def session-state (atom {:lists nil :current-list-products nil}))
@@ -17,8 +16,12 @@
 ;; -------------------------
 ;; Ajax call handlers
 (defn get-lists-handler [response]
-  (.log js/console "response")
-  (.log js/console response))
+  (let [lists-map (js->clj (.parse js/JSON response))]
+    (.log js/console "response")
+    (.log js/console response)
+    (.log js/console "lists-map")
+    (.log js/console lists-map)
+    (swap! session-state assoc :lists lists-map)))
 
 (defn load-website [response]
   (-> (jquery "#website-preview-area")
@@ -32,6 +35,10 @@
 
 ;; -------------------------
 ;; Components
+(defn list-menu []
+  (let [lists (:lists @session-state)]
+    [:li "Super Secret list"]))
+
 (defn navbar []
   [:div.navbar.navbar-inverse.navbar-fixed-top
    [:div.container
@@ -40,8 +47,19 @@
     [:div.navbar-collapse.collapse
      [:form.navbar-form.navbar-left {:role "search"}
       [:div.form-group
-       [:input#search-txtbox.form-control {:type "text" :placeholder "Find friends or lists"}]]]
+       [:input#search-txtbox.form-control {:type "text" :placeholder "Find friends or lists"}]]
+      ]
      [:ul.nav.navbar-nav.navbar-right
+      [:li.dropdown
+       [:a.dropdown-toggle {:href "#"
+                            :data-toggle "dropdown"
+                            :role "button"
+                            :aria-haspopup "true"
+                            :aria-expanded "false"}
+        "My Lists" [:span.caret]]
+        [:ul.dropdown-menu
+         [:li "New List"]
+         (list-menu)]]
       [:li {:class (when (= :about (session/get :page)) )}
        [:a {:href "#/settings"} "Settings"]]
       [:li {:class (when (= :about (session/get :page)) )}
