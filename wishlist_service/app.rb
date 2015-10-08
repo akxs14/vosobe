@@ -1,6 +1,10 @@
 require "sinatra"
+require 'sinatra/cross_origin'
 require_relative 'redis_adapter'
 
+configure do
+  enable :cross_origin
+end
 
 redis = Redis.new(:host => "127.0.0.1", :port => 6379)
 

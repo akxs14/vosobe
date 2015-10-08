@@ -2,3 +2,4 @@ source "https://www.rubygems.org"
 
 gem "sinatra"
 gem "redis"
+gem "sinatra-cross_origin", "~> 0.3.1"
