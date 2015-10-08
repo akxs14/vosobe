@@ -26,7 +26,7 @@
                  [buddy "0.6.2"]
                  [migratus "0.8.4"]
                  [conman "0.1.7"]
-                 [org.postgresql/postgresql "9.4-1201-jdbc41"]
+                 [org.postgresql/postgresql "9.4-1201-jdbc41"]  
                  [org.clojure/clojurescript "1.7.122" :scope "provided"]
                  [org.clojure/tools.reader "0.9.2"]
                  [reagent "0.5.1-rc"]
@@ -39,7 +39,8 @@
                  [metosin/compojure-api "0.23.0"]
                  [metosin/ring-swagger-ui "2.1.2"]
                  [org.immutant/web "2.1.0"]
-                 [org.clojars.frozenlock/reagent-modals "0.2.3"]]
+                 [org.clojars.frozenlock/reagent-modals "0.2.3"]
+                 [org.clojure/core.async "0.1.346.0-17112a-alpha"]]
 
   :min-lein-version "2.0.0"
   :uberjar-name "web_app.jar"
