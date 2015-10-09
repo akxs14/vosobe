@@ -39,8 +39,7 @@
                  [metosin/compojure-api "0.23.0"]
                  [metosin/ring-swagger-ui "2.1.2"]
                  [org.immutant/web "2.1.0"]
-                 [org.clojars.frozenlock/reagent-modals "0.2.3"]
-                 [org.clojure/core.async "0.1.346.0-17112a-alpha"]]
+                 [org.clojars.frozenlock/reagent-modals "0.2.3"]]
 
   :min-lein-version "2.0.0"
   :uberjar-name "web_app.jar"
