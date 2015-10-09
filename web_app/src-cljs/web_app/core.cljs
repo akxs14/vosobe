@@ -6,7 +6,8 @@
             [goog.history.EventType :as EventType]
             [markdown.core :refer [md->html]]
             [ajax.core :refer [GET POST]]
-            [reagent-modals.modals :as modal])
+            [reagent-modals.modals :as modal]
+            [clojure.walk :as walk])
   (:import goog.History))
 
 (def session-state (atom {:lists nil :current-list-products nil}))
@@ -16,12 +17,9 @@
 ;; -------------------------
 ;; Ajax call handlers
 (defn get-lists-handler [response]
-  (let [lists-map (js->clj (.parse js/JSON response))]
-    (.log js/console "response")
-    (.log js/console response)
-    (.log js/console "lists-map")
-    (.log js/console lists-map)
-    (swap! session-state assoc :lists lists-map)))
+  (let [str-lists (js->clj (.parse js/JSON response))
+        lists (map walk/keywordize-keys str-lists)]
+    (swap! session-state assoc :lists lists)))
 
 (defn load-website [response]
   (-> (jquery "#website-preview-area")
@@ -159,4 +157,3 @@
   (hook-browser-navigation!)
   (mount-components)
   (GET "http://localhost:4567/users/akxs14/lists" {:handler get-lists-handler}))
-
