@@ -13,7 +13,14 @@ class User
 
   def self.get_lists redis, username
     lists = redis.hgetall("users:#{username}:lists")
-    lists.each {|k,v| lists[k] = JSON.parse(v)}
+    list_array = []
+
+    lists.each do |k,v|
+      tmp_list = JSON.parse(v)
+      tmp_list["id"] = k
+      list_array << tmp_list
+    end
+    list_array
   end
 
   # get lists which are not visible from other users

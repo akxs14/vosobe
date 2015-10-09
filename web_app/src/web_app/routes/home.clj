@@ -15,5 +15,4 @@
 (defroutes home-routes
   (GET "/crawler" [fetch-url]
        (crawl-url fetch-url))
-  (GET "/" [] (home-page))
-  (GET "/docs" [] (ok (-> "docs/docs.md" io/resource slurp))))
+  (GET "/" [] (home-page)))

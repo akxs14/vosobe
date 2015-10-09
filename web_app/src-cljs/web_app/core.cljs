@@ -13,7 +13,6 @@
 (def session-state (atom {:lists nil :current-list-products nil}))
 (def jquery (js* "$"))
 
-
 ;; -------------------------
 ;; Ajax call handlers
 (defn get-lists-handler [response]
@@ -58,9 +57,9 @@
         [:ul.dropdown-menu
          [:li "New List"]
          (list-menu)]]
-      [:li {:class (when (= :about (session/get :page)) )}
+      [:li {:class (when (= :settings (session/get :page)) )}
        [:a {:href "#/settings"} "Settings"]]
-      [:li {:class (when (= :about (session/get :page)) )}
+      [:li {:class (when (= :login (session/get :page)) )}
        [:a {:href "#/login"} "Login"]]]
      ]]])
 
@@ -97,12 +96,6 @@
 
 ;; -------------------------
 ;; Pages
-(defn about-page []
-  [:div.container
-   [:div.row
-    [:div.col-md-12
-     "this is the story of web_app... work in progress"]]])
-
 (defn home-page []
   [:div#grid-container.container-fluid
    [:div#first-row.row
@@ -110,8 +103,7 @@
    [modal/modal-window]])
 
 (def pages
-  {:home #'home-page
-   :about #'about-page})
+  {:home #'home-page})
 
 (defn not-found []
   [:div [:h1 "404: Page doesn't exist"]])
@@ -127,10 +119,6 @@
 (secretary/defroute "/" []
   (session/put! :page :home))
 
-(secretary/defroute "/about" []
-  (session/put! :page :about))
-
-
 ;; -------------------------
 ;; History
 ;; must be called after routes have been defined
@@ -144,16 +132,12 @@
 
 ;; -------------------------
 ;; Initialize app
-(defn fetch-docs! []
-  (GET "/docs" {:handler #(session/put! :docs %)}))
-
 (defn mount-components []
   (reagent/render [#'navbar] (.getElementById js/document "navbar"))
   (reagent/render [#'page] (.getElementById js/document "app"))
   (reagent/render [#'first-cell] (.getElementById js/document "first-cell")))
 
 (defn init! []
-  (fetch-docs!)
   (hook-browser-navigation!)
   (mount-components)
   (GET "http://localhost:4567/users/akxs14/lists" {:handler get-lists-handler}))

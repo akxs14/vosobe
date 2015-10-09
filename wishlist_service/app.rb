@@ -176,8 +176,7 @@ end
 
 # get the user's lists
 get "/users/:username/lists" do
-  lists = User.get_lists(redis, params[:username])
-  lists.to_json
+  User.get_lists(redis, params[:username]).to_json
 end
 
 # delete a list
