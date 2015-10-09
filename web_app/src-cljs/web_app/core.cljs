@@ -29,15 +29,6 @@
 
 ;; -------------------------
 ;; Event Handlers
-(defn get-async [url]
-  (let [ch (chan l)]
-    (xhr/send url
-              (fn [event]
-                (let [res (-> event .-target .getResponseText)]
-                  (go (>! ch res)
-                      (close! ch)))))
-    ch))
-
 (defn preview-product-page [url]
   (GET "/crawler" {:params {:fetch-url url}
                    :handler load-website}))
