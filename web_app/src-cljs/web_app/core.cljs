@@ -6,11 +6,7 @@
             [goog.history.EventType :as EventType]
             [markdown.core :refer [md->html]]
             [ajax.core :refer [GET POST]]
-            [reagent-modals.modals :as modal]
-            [goog.net.XhrIo :as xhr]
-            [cljs.core.async :as async :refer [chan close!]])
-  (:require-macros
-    [cljs.core.async.macros :refer [go alt!]])
+            [reagent-modals.modals :as modal])
   (:import goog.History))
 
 (def session-state (atom {:lists nil :current-list-products nil}))
@@ -33,6 +29,15 @@
 
 ;; -------------------------
 ;; Event Handlers
+(defn get-async [url]
+  (let [ch (chan l)]
+    (xhr/send url
+              (fn [event]
+                (let [res (-> event .-target .getResponseText)]
+                  (go (>! ch res)
+                      (close! ch)))))
+    ch))
+
 (defn preview-product-page [url]
   (GET "/crawler" {:params {:fetch-url url}
                    :handler load-website}))
@@ -162,4 +167,5 @@
   (fetch-docs!)
   (hook-browser-navigation!)
   (mount-components)
-  (GET "/users/akxs14/lists" {:handler get-lists-handler}))
+  (GET "http://localhost:4567/users/akxs14/lists" {:handler get-lists-handler}))
+
