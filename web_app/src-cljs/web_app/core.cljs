@@ -11,6 +11,7 @@
   (:import goog.History))
 
 (def session-state (atom {:lists nil :current-list-products nil}))
+(def wishlist-server "http://localhost:4567")
 (def jquery (js* "$"))
 
 ;; -------------------------
@@ -19,6 +20,7 @@
   (let [str-lists (js->clj (.parse js/JSON response))
         lists (map walk/keywordize-keys str-lists)]
     (swap! session-state assoc :lists lists)))
+
 
 (defn load-website [response]
   (-> (jquery "#website-preview-area")
@@ -140,4 +142,4 @@
 (defn init! []
   (hook-browser-navigation!)
   (mount-components)
-  (GET "http://localhost:4567/users/akxs14/lists" {:handler get-lists-handler}))
+  (GET (str wishlist-server "/users/akxs14/lists") {:handler get-lists-handler}))
