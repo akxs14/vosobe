@@ -10,7 +10,7 @@
             [clojure.walk :as walk])
   (:import goog.History))
 
-(def session-state (atom {:lists nil :current-list-products nil}))
+(def session-state (atom {:lists nil :current-list-products nil :username "akxs14"}))
 (def wishlist-server "http://localhost:4567")
 (def jquery (js* "$"))
 
@@ -34,9 +34,10 @@
 
 ;; -------------------------
 ;; Components
-(defn list-menu []
-  (let [lists (:lists @session-state)]
-    [:li "Super Secret list"]))
+(defn user-list-menu []
+  (for [list (:lists @session-state)]
+    [:li {:key (str "list-" (:id list))}
+     [:a {:href (str wishlist-server "/users/" (:username @session-state) "/lists/" (:id list))} (:title list)]]))
 
 (defn navbar []
   [:div.navbar.navbar-inverse.navbar-fixed-top
@@ -57,8 +58,7 @@
                             :aria-expanded "false"}
         "My Lists" [:span.caret]]
         [:ul.dropdown-menu
-         [:li "New List"]
-         (list-menu)]]
+         (user-list-menu)]]
       [:li {:class (when (= :settings (session/get :page)) )}
        [:a {:href "#/settings"} "Settings"]]
       [:li {:class (when (= :login (session/get :page)) )}
@@ -142,4 +142,5 @@
 (defn init! []
   (hook-browser-navigation!)
   (mount-components)
-  (GET (str wishlist-server "/users/akxs14/lists") {:handler get-lists-handler}))
+  (GET (str wishlist-server "/users/" (:username @session-state) "/lists")
+       {:handler get-lists-handler}))
