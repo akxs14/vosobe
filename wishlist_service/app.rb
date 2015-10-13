@@ -174,6 +174,12 @@ post "/users/:username/lists" do
   {"id" => id, "results" => "list created"}.to_json
 end
 
+# return a list
+get "/users/:username/lists/:listid" do
+  list = User.get_list(redis, params[:username], params[:listid])
+  list.to_json
+end
+
 # get the user's lists
 get "/users/:username/lists" do
   User.get_lists(redis, params[:username]).to_json
@@ -184,12 +190,6 @@ delete "/users/:username/lists/:listid" do
   {"result" => User.delete_list(redis,
     params[:username],
     params[:listid])}.to_json
-end
-
-# return a list
-get "/users/:username/lists/:listid" do
-  list = User.get_list(redis, params[:username], params[:listid])
-  list.to_json
 end
 
 # update a list

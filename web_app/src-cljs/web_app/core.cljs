@@ -10,7 +10,8 @@
             [clojure.walk :as walk])
   (:import goog.History))
 
-(def session-state (atom {:lists nil :current-list-products nil :username "akxs14"}))
+(def session-state (atom {:lists nil :current-list-products nil
+                          :username "akxs14" :current-list-id 0}))
 (def wishlist-server "http://localhost:4567")
 (def jquery (js* "$"))
 
@@ -19,25 +20,42 @@
 (defn get-lists-handler [response]
   (let [str-lists (js->clj (.parse js/JSON response))
         lists (map walk/keywordize-keys str-lists)]
-    (swap! session-state assoc :lists lists)))
+    (swap! session-state assoc :lists lists)
+    (swap! session-state assoc :current-list-id (:id (first lists)))
+    (load-list-products (:username @session-state) (:current-list-id @session-state))))
 
 
 (defn load-website [response]
   (-> (jquery "#website-preview-area")
       (.html response)))
 
+(defn get-textbox-text [textbox-id]
+  (-> (jquery textbox-id)
+      (.val)))
+
 ;; -------------------------
 ;; Event Handlers
+(defn save-new-product [url prod_name price description]
+  (.log js/console prod_name)
+  (.log js/console price)
+  (.log js/console description)
+  (modal/close-modal!))
+
 (defn preview-product-page [url]
   (GET "/crawler" {:params {:fetch-url url}
                    :handler load-website}))
+
+(defn load-list-products [username list-id]
+  (GET (str wishlist-server "/users/" username "/lists/" list-id "/products")
+       {:handler #(.log js/console %)}))
 
 ;; -------------------------
 ;; Components
 (defn user-list-menu []
   (for [list (:lists @session-state)]
     [:li {:key (str "list-" (:id list))}
-     [:a {:href (str wishlist-server "/users/" (:username @session-state) "/lists/" (:id list))} (:title list)]]))
+     [:a {:href "#" :on-click #(load-list-products (:username @session-state) (:id list))}
+      (:title list)]]))
 
 (defn navbar []
   [:div.navbar.navbar-inverse.navbar-fixed-top
@@ -88,7 +106,12 @@
       [:textarea#product_descr.col-md-8 {:rows 4}]]
      [:br]
      [:div.row
-      [:button.col-md-3.col-md-offset-1 {:on-click #("bla")} "Add"]
+      [:button.col-md-3.col-md-offset-1
+       {:on-click #(save-new-product
+                     (get-textbox-text "#product_url")
+                     (get-textbox-text "#product_name")
+                     (get-textbox-text "#product_price")
+                     (get-textbox-text "#product_descr"))} "Add"]
       [:button.col-md-3.col-md-offset-1 {:data-dismiss "modal"} "Cancel"]]
      ]]])
 
