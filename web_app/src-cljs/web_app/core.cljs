@@ -5,7 +5,10 @@
             [goog.events :as events]
             [goog.history.EventType :as EventType]
             [markdown.core :refer [md->html]]
-            [ajax.core :refer [GET POST]]
+            [ajax.core :refer [GET POST
+                               ajax-request
+                               json-request-format
+                               json-response-format]]
             [reagent-modals.modals :as modal]
             [clojure.walk :as walk])
   (:import goog.History))
@@ -21,9 +24,8 @@
   (let [str-lists (js->clj (.parse js/JSON response))
         lists (map walk/keywordize-keys str-lists)]
     (swap! session-state assoc :lists lists)
-    (swap! session-state assoc :current-list-id (:id (first lists)))
-    (load-list-products (:username @session-state) (:current-list-id @session-state))))
-
+    (swap! session-state assoc :current-list-id (:id (first lists)))))
+    ; (load-list-products (:username @session-state) (:current-list-id @session-state))
 
 (defn load-website [response]
   (-> (jquery "#website-preview-area")
@@ -33,13 +35,26 @@
   (-> (jquery textbox-id)
       (.val)))
 
+(defn save-product-result [response]
+  (.log js/console response))
+
 ;; -------------------------
 ;; Event Handlers
 (defn save-new-product [url prod_name price description]
-  (.log js/console prod_name)
-  (.log js/console price)
-  (.log js/console description)
-  (modal/close-modal!))
+  (let [new-product-url (str wishlist-server "/users/" 
+                             (:username @session-state) "/lists/" 
+                             (:current-list-id @session-state) 
+                             "/products")]
+    (POST new-product-url
+          {:params {:url "www.bla.com"
+                  :name prod_name
+                  :price price
+                  :description description}
+           :format :json
+           :response-format :json
+           :keywords? true
+           :handler save-product-result})
+  (modal/close-modal!)))
 
 (defn preview-product-page [url]
   (GET "/crawler" {:params {:fetch-url url}

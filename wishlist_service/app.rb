@@ -107,6 +107,9 @@ end
 
 # add a new product in a list
 post "/users/:username/lists/:listid/products" do
+  puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+  puts "I'm in!"
+  puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
   payload = JSON.parse(request.body.read)
   payload["created_at"] = Time.now.to_f
   payload["updated_at"] = Time.now.to_f
