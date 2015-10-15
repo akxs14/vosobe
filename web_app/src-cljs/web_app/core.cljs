@@ -5,10 +5,7 @@
             [goog.events :as events]
             [goog.history.EventType :as EventType]
             [markdown.core :refer [md->html]]
-            [ajax.core :refer [GET POST
-                               ajax-request
-                               json-request-format
-                               json-response-format]]
+            [ajax.core :refer [GET POST]]
             [reagent-modals.modals :as modal]
             [clojure.walk :as walk])
   (:import goog.History))
@@ -46,14 +43,12 @@
                              (:current-list-id @session-state) 
                              "/products")]
     (POST new-product-url
-          {:params {:url "www.bla.com"
-                  :name prod_name
-                  :price price
-                  :description description}
+          {:params {:name prod_name
+                    :price price
+                    :description description}
            :format :json
            :response-format :json
-           :keywords? true
-           :handler save-product-result})
+           :keywords? true})
   (modal/close-modal!)))
 
 (defn preview-product-page [url]

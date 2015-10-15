@@ -8,6 +8,16 @@ end
 
 redis = Redis.new(:host => "127.0.0.1", :port => 6379)
 
+###############################################################################
+#
+# => Handle preflight OPTIONS request (for CORS)
+#
+###############################################################################
+options "*" do
+  response.headers["Allow"] = "HEAD,GET,PUT,POST,DELETE,OPTIONS"
+  response.headers["Access-Control-Allow-Headers"] = "X-Requested-With, X-HTTP-Method-Override, Content-Type, Cache-Control, Accept"
+  200
+end
 
 ###############################################################################
 #
@@ -107,15 +117,16 @@ end
 
 # add a new product in a list
 post "/users/:username/lists/:listid/products" do
+  response.headers["Access-Control-Allow-Origin"] = "*"
   puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-  puts "I'm in!"
+  puts request.body.read
   puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-  payload = JSON.parse(request.body.read)
-  payload["created_at"] = Time.now.to_f
-  payload["updated_at"] = Time.now.to_f
-  id = List.add_product(redis, params[:username], params[:listid], payload)
+  # payload = JSON.parse(request.body.read)
+  # payload["created_at"] = Time.now.to_f
+  # payload["updated_at"] = Time.now.to_f
+  # id = List.add_product(redis, params[:username], params[:listid], payload)
 
-  {"id" => id, "results" => "product created"}.to_json
+  {"id" => "1", "results" => "product created"}.to_json
 end
 
 # return the products from a list
