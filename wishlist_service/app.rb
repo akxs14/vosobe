@@ -118,15 +118,12 @@ end
 # add a new product in a list
 post "/users/:username/lists/:listid/products" do
   response.headers["Access-Control-Allow-Origin"] = "*"
-  puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-  puts request.body.read
-  puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-  # payload = JSON.parse(request.body.read)
-  # payload["created_at"] = Time.now.to_f
-  # payload["updated_at"] = Time.now.to_f
-  # id = List.add_product(redis, params[:username], params[:listid], payload)
+  payload = JSON.parse(request.body.read)
+  payload["created_at"] = Time.now.to_f
+  payload["updated_at"] = Time.now.to_f
+  id = List.add_product(redis, params[:username], params[:listid], payload)
 
-  {"id" => "1", "results" => "product created"}.to_json
+  {"id" => id, "results" => "product added to list #{params[:listid]}"}.to_json
 end
 
 # return the products from a list

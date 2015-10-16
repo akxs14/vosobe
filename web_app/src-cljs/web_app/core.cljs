@@ -17,6 +17,10 @@
 
 ;; -------------------------
 ;; Ajax call handlers
+(defn load-list-products [username list-id]
+  (GET (str wishlist-server "/users/" username "/lists/" list-id "/products")
+       {:handler #(.log js/console %)}))
+
 (defn get-lists-handler [response]
   (let [str-lists (js->clj (.parse js/JSON response))
         lists (map walk/keywordize-keys str-lists)]
@@ -40,24 +44,15 @@
 (defn save-new-product [url prod_name price description]
   (let [new-product-url (str wishlist-server "/users/" 
                              (:username @session-state) "/lists/" 
-                             (:current-list-id @session-state) 
-                             "/products")]
+                             (:current-list-id @session-state) "/products")]
     (POST new-product-url
-          {:params {:name prod_name
-                    :price price
-                    :description description}
-           :format :json
-           :response-format :json
-           :keywords? true})
+          {:params {:name prod_name :price price :description description}
+           :format :json :response-format :json :keywords? true})
   (modal/close-modal!)))
 
 (defn preview-product-page [url]
   (GET "/crawler" {:params {:fetch-url url}
                    :handler load-website}))
-
-(defn load-list-products [username list-id]
-  (GET (str wishlist-server "/users/" username "/lists/" list-id "/products")
-       {:handler #(.log js/console %)}))
 
 ;; -------------------------
 ;; Components
