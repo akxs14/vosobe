@@ -25,8 +25,8 @@
   (let [str-lists (js->clj (.parse js/JSON response))
         lists (map walk/keywordize-keys str-lists)]
     (swap! session-state assoc :lists lists)
-    (swap! session-state assoc :current-list-id (:id (first lists)))))
-    ; (load-list-products (:username @session-state) (:current-list-id @session-state))
+    (swap! session-state assoc :current-list-id (:id (first lists)))
+    (load-list-products (:username @session-state) (:current-list-id @session-state))))
 
 (defn load-website [response]
   (-> (jquery "#website-preview-area")
