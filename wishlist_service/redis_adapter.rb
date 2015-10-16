@@ -1,6 +1,17 @@
 require 'redis'
 require 'json'
 
+def hashmap_2_array hashmap
+  list_array = []
+
+  hashmap.each do |k,v|
+    tmp_list = JSON.parse(v)
+    tmp_list["id"] = k
+    list_array << tmp_list
+  end
+  list_array
+end
+
 class User
   # new_list = { :title, :public, :created_at, :updated_at }
   def self.add_list redis, username, new_list
@@ -10,17 +21,8 @@ class User
     new_id
   end
 
-
   def self.get_lists redis, username
-    lists = redis.hgetall("users:#{username}:lists")
-    list_array = []
-
-    lists.each do |k,v|
-      tmp_list = JSON.parse(v)
-      tmp_list["id"] = k
-      list_array << tmp_list
-    end
-    list_array
+    hashmap_2_array(redis.hgetall("users:#{username}:lists"))
   end
 
   # get lists which are not visible from other users
@@ -161,8 +163,7 @@ class List
   end
 
   def self.get_products redis, username, list_id
-    lists = redis.hgetall("users:#{username}:lists:#{list_id}:products")
-    lists.each {|k,v| lists[k] = JSON.parse(v)}
+    hashmap_2_array(redis.hgetall("users:#{username}:lists:#{list_id}:products"))
   end
 
 
