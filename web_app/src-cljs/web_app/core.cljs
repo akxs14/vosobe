@@ -16,50 +16,55 @@
 (def jquery (js* "$"))
 
 ;; -------------------------
-;; Ajax call handlers
-(defn load-list-products [username list-id]
-  (GET (str wishlist-server "/users/" username "/lists/" list-id "/products")
-       {:handler #(.log js/console %)}))
-
-(defn get-lists-handler [response]
-  (let [str-lists (js->clj (.parse js/JSON response))
-        lists (map walk/keywordize-keys str-lists)]
-    (swap! session-state assoc :lists lists)
-    (swap! session-state assoc :current-list-id (:id (first lists)))
-    (load-list-products (:username @session-state) (:current-list-id @session-state))))
-
-(defn load-website [response]
-  (-> (jquery "#website-preview-area")
-      (.html response)))
-
+;; Event Handlers
 (defn get-textbox-text [textbox-id]
   (-> (jquery textbox-id)
       (.val)))
 
-(defn save-product-result [response]
-  (.log js/console response))
-
-;; -------------------------
-;; Event Handlers
-(defn save-new-product [url prod_name price description]
-  (let [new-product-url (str wishlist-server "/users/" 
-                             (:username @session-state) "/lists/" 
+(defn save-new-product
+  "Saves a product in the current list"
+  [url prod_name price description]
+  (let [new-product-url (str wishlist-server "/users/"
+                             (:username @session-state) "/lists/"
                              (:current-list-id @session-state) "/products")]
     (POST new-product-url
           {:params {:name prod_name :price price :description description}
            :format :json :response-format :json :keywords? true})
   (modal/close-modal!)))
 
-(defn preview-product-page [url]
+(defn load-website
+  "Loads the crawled HTML in the preview area"
+  [crawled-html]
+  (-> (jquery "#website-preview-area")
+      (.html crawled-html)))
+
+(defn preview-product-page
+  "Crawls the given url and returns the html"
+  [url]
   (GET "/crawler" {:params {:fetch-url url}
                    :handler load-website}))
+
+(defn get-list-products
+  "Fetches list products from wishlist service"
+  [username list-id]
+  (GET (str wishlist-server "/users/" username "/lists/" list-id "/products")
+       {:handler #(swap! session-state assoc :current-list-products %)}))
+
+(defn get-lists-handler
+  "Stores lists in session-state and loads the first list products"
+  [response]
+  (let [str-lists (js->clj (.parse js/JSON response))
+        lists (map walk/keywordize-keys str-lists)]
+    (swap! session-state assoc :lists lists)
+    (swap! session-state assoc :current-list-id (:id (first lists)))
+    (get-list-products (:username @session-state) (:current-list-id @session-state))))
 
 ;; -------------------------
 ;; Components
 (defn user-list-menu []
   (for [list (:lists @session-state)]
     [:li {:key (str "list-" (:id list))}
-     [:a {:href "#" :on-click #(load-list-products (:username @session-state) (:id list))}
+     [:a {:href "#" :on-click #(get-list-products (:username @session-state) (:id list))}
       (:title list)]]))
 
 (defn navbar []
@@ -123,6 +128,8 @@
 (defn first-cell []
   [:p [:a {:on-click #(modal/modal! (add-product-page) {:size :lg})} "Click to add a product"]])
 
+(defn product-cell [url prod_name price description]
+  [:p [:a {:href url} "bla"]])
 
 ;; -------------------------
 ;; Pages
