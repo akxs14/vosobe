@@ -48,7 +48,7 @@
   "Fetches list products from wishlist service"
   [username list-id]
   (GET (str wishlist-server "/users/" username "/lists/" list-id "/products")
-       {:handler #(swap! session-state assoc :current-list-products %)}))
+       {:handler #(swap! session-state assoc :current-list-products (js->clj (.parse js/JSON %)))}))
 
 (defn get-lists-handler
   "Stores lists in session-state and loads the first list products"
@@ -122,8 +122,16 @@
                      (get-textbox-text "#product_name")
                      (get-textbox-text "#product_price")
                      (get-textbox-text "#product_descr"))} "Add"]
-      [:button.col-md-3.col-md-offset-1 {:data-dismiss "modal"} "Cancel"]]
-     ]]])
+      [:button.col-md-3.col-md-offset-1 {:data-dismiss "modal"} "Cancel"]]]]])
+
+(defn first-row []
+   [:div#first-row.row
+    [:div#first-cell.col-md-3.item-cell]])
+    ; (for [product products]
+    ;   (product-cell "www.bla.com"
+    ;                 (:prod_name product)
+    ;                 (:price product)
+    ;                 (:description product)))])
 
 (defn first-cell []
   [:p [:a {:on-click #(modal/modal! (add-product-page) {:size :lg})} "Click to add a product"]])
@@ -134,10 +142,11 @@
 ;; -------------------------
 ;; Pages
 (defn home-page []
+  (let [list-products (:current-list-products @session-state)
+        first-row-end-index (min 3 (count list-products))]
   [:div#grid-container.container-fluid
-   [:div#first-row.row
-    [:div#first-cell.col-md-3.item-cell]]
-   [modal/modal-window]])
+   [first-row]
+   [modal/modal-window]]))
 
 (def pages
   {:home #'home-page})
