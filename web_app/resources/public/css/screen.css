@@ -9,12 +9,12 @@ body {
   border: 1px solid #000;
 }
 
-#first-cell {
+.product-cell, #first-cell {
   height: 200px;
   display: table;
 }
 
-#first-cell p {
+.product-cell p, #first-cell p {
   position: absolute;
   top: 45%;
   left: 20%;

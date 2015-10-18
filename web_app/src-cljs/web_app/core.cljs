@@ -124,20 +124,20 @@
                      (get-textbox-text "#product_descr"))} "Add"]
       [:button.col-md-3.col-md-offset-1 {:data-dismiss "modal"} "Cancel"]]]]])
 
+(defn first-cell []
+  [:p [:a {:on-click #(modal/modal! (add-product-page) {:size :lg})} "Click to add a product"]])
+
+(defn product-cell [url prod_name price description]
+  [:div.col-md-3.item-cell.product-cell [:p [:a {:href url} "bla"]]])
+
 (defn first-row [products]
    [:div#first-row.row
     [:div#first-cell.col-md-3.item-cell]
     (for [product products]
       (product-cell "www.bla.com"
-                    (:prod_name product)
+                    (:name product)
                     (:price product)
                     (:description product)))])
-
-(defn first-cell []
-  [:p [:a {:on-click #(modal/modal! (add-product-page) {:size :lg})} "Click to add a product"]])
-
-(defn product-cell [url prod_name price description]
-  [:p [:a {:href url} "bla"]])
 
 ;; -------------------------
 ;; Pages
