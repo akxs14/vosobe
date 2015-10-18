@@ -124,14 +124,14 @@
                      (get-textbox-text "#product_descr"))} "Add"]
       [:button.col-md-3.col-md-offset-1 {:data-dismiss "modal"} "Cancel"]]]]])
 
-(defn first-row []
+(defn first-row [products]
    [:div#first-row.row
-    [:div#first-cell.col-md-3.item-cell]])
-    ; (for [product products]
-    ;   (product-cell "www.bla.com"
-    ;                 (:prod_name product)
-    ;                 (:price product)
-    ;                 (:description product)))])
+    [:div#first-cell.col-md-3.item-cell]
+    (for [product products]
+      (product-cell "www.bla.com"
+                    (:prod_name product)
+                    (:price product)
+                    (:description product)))])
 
 (defn first-cell []
   [:p [:a {:on-click #(modal/modal! (add-product-page) {:size :lg})} "Click to add a product"]])
@@ -145,7 +145,7 @@
   (let [list-products (:current-list-products @session-state)
         first-row-end-index (min 3 (count list-products))]
   [:div#grid-container.container-fluid
-   [first-row]
+   [first-row (subvec list-products 0 first-row-end-index)]
    [modal/modal-window]]))
 
 (def pages
