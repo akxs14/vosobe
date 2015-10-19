@@ -7,13 +7,15 @@
             [markdown.core :refer [md->html]]
             [ajax.core :refer [GET POST]]
             [reagent-modals.modals :as modal]
-            [clojure.walk :as walk])
+            [clojure.walk :as walk]
+            [cognitect.transit :as transit])
   (:import goog.History))
 
 (def session-state (atom {:lists nil :current-list-products nil
                           :username "akxs14" :current-list-id 0}))
 (def wishlist-server "http://localhost:4567")
 (def jquery (js* "$"))
+(def r (transit/reader :json))
 
 ;; -------------------------
 ;; Event Handlers
@@ -44,11 +46,15 @@
   (GET "/crawler" {:params {:fetch-url url}
                    :handler load-website}))
 
+(defn get-products-handler [response]
+  (let [str-products (transit/read r response)]
+    (swap! session-state assoc :current-list-products str-products)))
+
 (defn get-list-products
   "Fetches list products from wishlist service"
   [username list-id]
   (GET (str wishlist-server "/users/" username "/lists/" list-id "/products")
-       {:handler #(swap! session-state assoc :current-list-products (js->clj (.parse js/JSON %)))}))
+       {:handler get-products-handler}))
 
 (defn get-lists-handler
   "Stores lists in session-state and loads the first list products"
@@ -127,26 +133,28 @@
 (defn first-cell []
   [:p [:a {:on-click #(modal/modal! (add-product-page) {:size :lg})} "Click to add a product"]])
 
-(defn product-cell [url prod_name price description]
-  [:div.col-md-3.item-cell.product-cell [:p [:a {:href url} "bla"]]])
+(defn product-cell [product url prod_name price description]
+  [:div.col-md-3.item-cell.product-cell [:p [:a {:href url} url]]])
 
 (defn first-row [products]
    [:div#first-row.row
     [:div#first-cell.col-md-3.item-cell]
     (for [product products]
-      (product-cell "www.bla.com"
-                    (:name product)
-                    (:price product)
-                    (:description product)))])
+      (product-cell product
+                    (str "www.bla.com/" (get product "id"))
+                    (get product "prod_name")
+                    (get product "price")
+                    (get product "description")))])
 
 ;; -------------------------
 ;; Pages
 (defn home-page []
   (let [list-products (:current-list-products @session-state)
-        first-row-end-index (min 3 (count list-products))]
-  [:div#grid-container.container-fluid
-   [first-row (subvec list-products 0 first-row-end-index)]
-   [modal/modal-window]]))
+        first-row-end-index (min 3 (count list-products))
+        first-row-products (subvec list-products 0 first-row-end-index)]
+    [:div#grid-container.container-fluid
+     [first-row first-row-products]
+     [modal/modal-window]]))
 
 (def pages
   {:home #'home-page})
