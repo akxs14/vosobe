@@ -133,7 +133,7 @@
 (defn first-cell []
   [:p [:a {:on-click #(modal/modal! (add-product-page) {:size :lg})} "Click to add a product"]])
 
-(defn product-cell [product url prod_name price description]
+(defn product-cell [id url prod_name price description]
   [:div.col-md-3.item-cell.product-cell [:p [:a {:href url} url]]])
 
 (defn first-row [products]
