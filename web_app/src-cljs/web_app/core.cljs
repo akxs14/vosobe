@@ -134,15 +134,16 @@
   [:p [:a {:on-click #(modal/modal! (add-product-page) {:size :lg})} "Click to add a product"]])
 
 (defn product-cell [id url prod_name price description]
-  [:div.col-md-3.item-cell.product-cell [:p [:a {:href url} url]]])
+  [:div.col-md-3.item-cell.product-cell [:p [:a {:href url} (str prod_name " | "
+                                                                 price " | " description)]]])
 
 (defn first-row [products]
    [:div#first-row.row
     [:div#first-cell.col-md-3.item-cell]
     (for [product products]
-      (product-cell product
-                    (str "www.bla.com/" (get product "id"))
-                    (get product "prod_name")
+      (product-cell (get product "id")
+                    "http://www.google.com"
+                    (get product "name")
                     (get product "price")
                     (get product "description")))])
 
