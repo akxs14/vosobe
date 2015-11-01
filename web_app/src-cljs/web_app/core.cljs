@@ -149,8 +149,7 @@
       (product-cell (get product "id") (get product "name") (get product "price") (get product "description")))])
 
 (defn product-grid [list-products]
-  (.log js/console "in product-grid")
-    )
+  (map #(product-row %) (partition-all 4 list-products)))
 
 ;; -------------------------
 ;; Pages
@@ -161,7 +160,7 @@
   [:div#grid-container.container-fluid
    [first-row first-row-products]
    (if (> (count list-products) 3)
-     [product-grid (subvec list-products 3)])   
+     (product-grid (subvec list-products 3)))   
    [modal/modal-window]]))
 
 (def pages
