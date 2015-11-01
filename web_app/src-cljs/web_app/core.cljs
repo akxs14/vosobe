@@ -133,19 +133,24 @@
 (defn first-cell []
   [:p [:a {:on-click #(modal/modal! (add-product-page) {:size :lg})} "Click to add a product"]])
 
-(defn product-cell [id url prod_name price description]
-  [:div.col-md-3.item-cell.product-cell [:p [:a {:href url} (str prod_name " | "
-                                                                 price " | " description)]]])
+(defn product-cell [id prod_name price description]
+  [:div.col-md-3.item-cell.product-cell [:p [:a {:href "http://www.google.com"} 
+                                             (str prod_name " | " price " | " description)]]])
 
 (defn first-row [products]
    [:div#first-row.row
     [:div#first-cell.col-md-3.item-cell]
     (for [product products]
-      (product-cell (get product "id")
-                    "http://www.google.com"
-                    (get product "name")
-                    (get product "price")
-                    (get product "description")))])
+      (product-cell (get product "id") (get product "name") (get product "price") (get product "description")))])
+
+(defn product-row [products]
+   [:div.row
+    (for [product products]
+      (product-cell (get product "id") (get product "name") (get product "price") (get product "description")))])
+
+(defn product-grid [list-products]
+  (.log js/console "in product-grid")
+    )
 
 ;; -------------------------
 ;; Pages
@@ -153,9 +158,11 @@
   (let [list-products (:current-list-products @session-state)
         first-row-end-index (min 3 (count list-products))
         first-row-products (subvec list-products 0 first-row-end-index)]
-    [:div#grid-container.container-fluid
-     [first-row first-row-products]
-     [modal/modal-window]]))
+  [:div#grid-container.container-fluid
+   [first-row first-row-products]
+   (if (> (count list-products) 3)
+     [product-grid (subvec list-products 3)])   
+   [modal/modal-window]]))
 
 (def pages
   {:home #'home-page})
