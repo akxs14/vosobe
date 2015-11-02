@@ -21,6 +21,10 @@ body {
   left: 20%;
 }
 
+.delete-product-icon {
+  text-align: right;
+}
+
 a, a:hover {
   text-decoration: none;
 }

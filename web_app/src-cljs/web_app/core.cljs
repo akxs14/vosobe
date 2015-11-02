@@ -65,6 +65,13 @@
     (swap! session-state assoc :current-list-id (:id (first lists)))
     (get-list-products (:username @session-state) (:current-list-id @session-state))))
 
+(defn delete-product [list-id product-id]
+  (let [products (:current-list-products @session-state)
+        updated-products (remove #(= (get % "id") product-id) products)]
+    (.log js/console products)
+    (.log js/console updated-products)
+    ))
+
 ;; -------------------------
 ;; Components
 (defn user-list-menu []
@@ -135,7 +142,9 @@
 
 (defn product-cell [id prod_name price description]
   [:div.col-md-3.item-cell.product-cell [:p [:a {:href "http://www.google.com"} 
-                                             (str prod_name " | " price " | " description)]]])
+                                             (str prod_name " | " price " | " description)]]
+   [:div.delete-product-icon [:a {:on-click #(delete-product (:current-list-id @session-state) id)} 
+                              [:img {:src "img/x_icon.png"}]]]])
 
 (defn first-row [products]
    [:div#first-row.row
